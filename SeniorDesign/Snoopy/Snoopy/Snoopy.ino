@@ -12,6 +12,9 @@ static const uint32_t GPSBaud = 9600;
 static const int GPS_ONOFFPin = A3;
 static const int GPS_SYSONPin = A2;
 static const int chipSelect = 10;
+int count;
+double lat,lng;
+int hour,minute,second,centisecond;
 // The TinyGPS++ object
 TinyGPSPlus gps;
 SoftwareSerial ss(RXPin, TXPin);
@@ -52,11 +55,10 @@ void setup()
 
 void loop()
 {
-  //variables for gps reading
-  double lat,lng;
-  int hour,minute,second,centisecond;
+
+
   
-  File dataFile = SD.open("output.csv", FILE_WRITE);
+  File dataFile = SD.open("OUTPUT.csv", FILE_WRITE);
   
   while (ss.available() > 0){
     if (gps.encode(ss.read())){
@@ -78,38 +80,37 @@ void loop()
         lat = gps.location.lat();
         lng = gps.location.lng();
       }else{
-        lat = 0;
-        lng = 0;
+        lat = gps.location.lat();
+        lng = gps.location.lng();
       }
     }//end if gps.encode
   }//end while ss avail
   
   //section below is to verify functionality of both sensors
     accel.read();
-    Serial.print(hour);
-    Serial.print(F(":"));
-    Serial.print(minute);
-    Serial.print(F(":"));
-    Serial.print(second);
+    //Serial.print(hour);
+    //Serial.print(F(":"));
+    //Serial.print(minute);
+    //Serial.print(F(":"));
+    //Serial.print(second);
+    //Serial.print(",");
+    Serial.print(count);
     Serial.print(",");
     Serial.print(accel.X);
     Serial.print(",");
     Serial.print(accel.Y);
     Serial.print(",");
     Serial.print(accel.Z);
-    /*Serial.print(lat);
     Serial.print(",");
-    */Serial.println(lng);
+    Serial.print(lat);
+    Serial.print(",");
+    Serial.println(lng);
     Serial.println();
     
   //following section is to write to a datafile
   if(dataFile){
     accel.read();
-    dataFile.print(hour);
-    dataFile.print(F(":"));
-    dataFile.print(minute);
-    dataFile.print(F(":"));
-    dataFile.print(second);
+    dataFile.print(count);
     dataFile.print(",");
     dataFile.print(accel.X);
     dataFile.print(",");
@@ -118,10 +119,10 @@ void loop()
     dataFile.print(accel.Z);
     dataFile.print(lat);
     dataFile.print(",");
-    dataFile.println(lng);
+    dataFile.print(lng);
     dataFile.println();
     dataFile.close();
    
   }  
-  
+  count=count+1;
 }
