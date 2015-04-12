@@ -33,7 +33,7 @@ void setup()
   }  
   
   Serial.begin(115200); //may need to change to 9600 baud
-    ss.begin(GPSBaud);
+  ss.begin(GPSBaud);
   Wire.begin();
   accel.begin(BMA250_range_16g, BMA250_update_time_05ms);//This sets up the BMA250 accelerometer
 
@@ -45,7 +45,6 @@ void setup()
   return; //card error 
   }  
   Serial.println("card initialized");
-  Serial.println(F("Device Testing of GPS module"));
   Serial.println();
   // End of SD Write/Read
   
@@ -53,33 +52,76 @@ void setup()
 
 void loop()
 {
+  //variables for gps reading
+  double lat,lng;
+  int hour,minute,second,centisecond;
   
   File dataFile = SD.open("output.csv", FILE_WRITE);
   
+  while (ss.available() > 0){
+    if (gps.encode(ss.read())){
+      if (gps.time.isValid())//write to file if time is valid
+      {
+        hour = gps.time.hour();
+        minute = gps.time.minute();
+        second = gps.time.second();    
+      }//end if gps.time
+      else
+      {
+        hour = 0;
+        minute = 0;
+        second = 0; 
+      }//end else
+      
+      //check to see if gps location is valid
+      if(gps.location.isValid()){
+        lat = gps.location.lat();
+        lng = gps.location.lng();
+      }else{
+        lat = 0;
+        lng = 0;
+      }
+    }//end if gps.encode
+  }//end while ss avail
+  
+  //section below is to verify functionality of both sensors
+    accel.read();
+    Serial.print(hour);
+    Serial.print(F(":"));
+    Serial.print(minute);
+    Serial.print(F(":"));
+    Serial.print(second);
+    Serial.print(",");
+    Serial.print(accel.X);
+    Serial.print(",");
+    Serial.print(accel.Y);
+    Serial.print(",");
+    Serial.print(accel.Z);
+    /*Serial.print(lat);
+    Serial.print(",");
+    */Serial.println(lng);
+    Serial.println();
+    
+  //following section is to write to a datafile
   if(dataFile){
     accel.read();
+    dataFile.print(hour);
+    dataFile.print(F(":"));
+    dataFile.print(minute);
+    dataFile.print(F(":"));
+    dataFile.print(second);
+    dataFile.print(",");
     dataFile.print(accel.X);
     dataFile.print(",");
     dataFile.print(accel.Y);
     dataFile.print(",");
     dataFile.print(accel.Z);
-    dataFile.println("");
+    dataFile.print(lat);
+    dataFile.print(",");
+    dataFile.println(lng);
+    dataFile.println();
     dataFile.close();
    
   }  
   
-  /*
-  accel.read();//This function gets new data from the accelerometer
-  Serial.print("X = ");
-  Serial.print(accel.X);
-  Serial.print("  ");
-  Serial.print("Y = ");
-  Serial.print(accel.Y);
-  Serial.print("  ");
-  Serial.print("Z = ");
-  Serial.print(accel.Z);
-  Serial.print("  Temperature(C) = ");
-  Serial.println((accel.rawTemp*0.5)+24.0,1);
-  delay(250);//We'll make sure we're over the 64ms update time set on the BMA250
-  */
 }
