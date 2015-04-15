@@ -38,13 +38,14 @@ void setup()
   Serial.begin(115200); //may need to change to 9600 baud
   ss.begin(GPSBaud);
   Wire.begin();
-  accel.begin(BMA250_range_16g, BMA250_update_time_05ms);//This sets up the BMA250 accelerometer
+  accel.begin(BMA250_range_16g, BMA250_update_time_8ms);//This sets up the BMA250 accelerometer
 
   
   // Following section is for SD Write/Read
   pinMode(10, OUTPUT);
   
   if(!SD.begin(chipSelect)){
+  Serial.println("Card failed, or not present");
   return; //card error 
   }  
   Serial.println("card initialized");
@@ -54,15 +55,13 @@ void setup()
 }
 
 void loop()
-{
-
-
-  
+{ 
   File dataFile = SD.open("OUTPUT.csv", FILE_WRITE);
+  // IMPLEMENT FILE SLICING HERE
   
   while (ss.available() > 0){
     if (gps.encode(ss.read())){
-      if (gps.time.isValid())//write to file if time is valid
+      if (gps.time.isValid()) //write to file if time is valid
       {
         hour = gps.time.hour();
         minute = gps.time.minute();
