@@ -91,6 +91,7 @@ if (readgpscount = 20000){
 cycle += 1;
 
 if (cycle >= (Buffer)){
+  RTC.readTime();
   SDcardWrite();
   cycle = 0;
   }
@@ -139,12 +140,12 @@ void SDcardWrite(){
 
   while (i < cycle){
    if(dataFile){
-    //dataFile.print(int(RTC.getHours()));
-    //dataFile.print(":");
-    //dataFile.print(int(RTC.getMinutes()));
-    //dataFile.print(":");
-    //dataFile.print(int(RTC.getSeconds()));
-    //dataFile.print(",");
+    dataFile.print(int(RTC.getHours()));
+    dataFile.print(":");
+    dataFile.print(int(RTC.getMinutes()));
+    dataFile.print(":");
+    dataFile.print(int(RTC.getSeconds()));
+    dataFile.print(",");
     dataFile.print(a_x[i], DEC);
     dataFile.print(",");
     dataFile.print(a_y[i], DEC);
@@ -156,12 +157,12 @@ void SDcardWrite(){
     dataFile.print(lng);
     dataFile.println();
     
-    //Serial.print(int(RTC.getHours()));
-    //Serial.print(":");
-    //Serial.print(int(RTC.getMinutes()));
-    //Serial.print(":");
-    //Serial.print(int(RTC.getSeconds()));
-    //Serial.print(",");
+    Serial.print(int(RTC.getHours()));
+    Serial.print(":");
+    Serial.print(int(RTC.getMinutes()));
+    Serial.print(":");
+    Serial.print(int(RTC.getSeconds()));
+    Serial.print(",");
     Serial.print(accel.X);
     Serial.print(",");
     Serial.print(accel.Y);
