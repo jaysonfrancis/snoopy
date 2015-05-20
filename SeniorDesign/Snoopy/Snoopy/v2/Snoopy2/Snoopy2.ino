@@ -41,13 +41,19 @@ byte INT_PIN = 3; // INTerrupt pin from the RTC. On Arduino Uno, this should be 
 byte int_number = 1; // On Arduino Uno, INT0 corresponds to pin 2, and INT1 to pin 3
 
 //====================================================================================
+
+
+
 void setup()
 {
+
+  
   //defining pin types for GPS module
   pinMode(GPS_SYSONPin, INPUT);
   pinMode(GPS_ONOFFPin, OUTPUT);
   digitalWrite(GPS_ONOFFPin,LOW);
   delay(5);
+
   
   //check to see if module is on or off
   if(digitalRead(GPS_SYSONPin) == LOW){
@@ -85,6 +91,8 @@ void loop()
 
 ReadValues();
 
+
+  
 if (readgpscount = 20000){
  ReadGPS(); 
 }
@@ -133,10 +141,9 @@ void ReadValues(){
 
 void SDcardWrite(){
   int i = 0;
-//  int leng = length + 1;
-//  char file[length];
+  
 
-  dataFile = SD.open("OUTPUT.csv", FILE_WRITE);
+  dataFile = SD.open("05202015.csv", FILE_WRITE);
 
   while (i < cycle){
    if(dataFile){
